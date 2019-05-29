@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/all.min.css">
+
+    <title>Papillon</title>
+
+    <script>
+        try {
+            if (localStorage.getItem("session")) { } else {
+                window.location = "login.html";
+            }
+        } catch (error) {
+            window.location = "login.html";
+        }
+    </script>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <button class="btn-toggle-menu"><i class="fas fa-bars"></i></button>
+        <div class="title">Menu</div>
+        <ul>
+            <li>
+                <a href="/home">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="/alunos">
+                    <i class="fas fa-user-graduate"></i>
+                    Alunos
+                </a>
+            </li>
+            <li>
+                <a href="/turmas">
+                    <i class="fas fa-users"></i>
+                    Turmas
+                </a>
+            </li>
+            <li>
+                <a href="/professores">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Professores
+                </a>
+            </li>
+            <li>
+                <a href="/livros">
+                    <i class="fas fa-book"></i>
+                    Livros
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="header">
+        Papillon
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/customAlert.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/all.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <div class="container" id="content">
+
+    </div>
+</body>
+
+</html>
