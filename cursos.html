@@ -11,7 +11,6 @@
 </div>
 
 <script>
-
     listar = function () {
         $("#content").append(`
             <div>
@@ -33,7 +32,7 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody class="lista-alunos">
+                    <tbody class="lista-cursos">
                         <tr>
                             <td colspan="2" class="loading" style="text-align: center">
                                 <div class="spinner-grow" role="status">
@@ -47,7 +46,7 @@
         `);
 
         $.ajax({
-            url: site + "/servidores"
+            url: site + "/cursos"
         }).done(function (r) {
             var h = "";
 
@@ -56,8 +55,9 @@
             }
 
             try {
-                r.forEach(element => {
-                    h += `<tr>
+                if (r.length) {
+                    r.forEach(element => {
+                        h += `<tr>
                         <td>
                             <div class="nome-tabela">
                                 <i class="fas fa-angle-right caret"></i>
@@ -65,10 +65,16 @@
                             </div>
                             <div class="mais-info-tabela">
                                 <div class="row">
-                                    <div class="col-12 mt-1">
-                                        Email
-                                        <div class="informacao">
-                                            ${element.email}
+                                    <div class="col-12 col-md-6 mb-3">
+                                        Nível
+                                        <div class="col-12 informacao">
+                                            ${element.nivel}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-3">
+                                        Turno
+                                        <div class="col-12 informacao">
+                                            ${element.turno}
                                         </div>
                                     </div>
                                 </div>
@@ -79,33 +85,41 @@
                             <button class="btn btn-danger btn-excluir" data-id="${element.id}"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>`;
-                });
+                    });
+                } else {
+                    h = `
+                        <tr>
+                            <td colspan="2">
+                                Nenhuma curso encontrado.
+                            </td>
+                        </tr>
+                    `;
+                }
 
             } catch (error) {
                 console.error(error);
             }
 
-            $(".lista-alunos").html(h);
+            $(".lista-cursos").html(h);
             $(".nome-tabela").on("click", function () {
                 toggleMaisInfo(this);
             });
 
             $(".btn-excluir").on("click", function () {
-                var nomeAluno = $(this).closest("tr").find(".nome-tabela p").html();
+                var nomeCurso = $(this).closest("tr").find(".nome-tabela p").html();
 
                 var btn = $(this);
 
                 customAlert({
                     title: "Excluir",
-                    body: "Tem certeza que deseja excluir " + nomeAluno + "?",
+                    body: "Tem certeza que deseja excluir " + nomeCurso + "?",
                     btnYes: {
                         text: "Sim",
                         click: () => {
-                            var profid = btn.attr("data-id");
+                            var cursoid = btn.attr("data-id");
                             $.ajax({
-                                url: site + "/servidores/" + profid,
-                                method: "DELETE",
-                                "Authorization": SESSION
+                                url: site + "/cursos/" + cursoid,
+                                method: "DELETE"
                             }).done(() => {
                                 btn.closest("tr").fadeOut(500, () => btn.closest("tr").remove());
                             });
@@ -124,7 +138,7 @@
             });
 
             $(".search-input").on("keyup", function () {
-                pesquisar(".lista-alunos", $(this).val());
+                pesquisar(".lista-cursos", $(this).val());
             });
         });
     }
@@ -150,32 +164,25 @@
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="senha">
-                            Senha
+                        <label class="input-group-text" for="matricula">
+                            Matricula
                         </label>
                     </div>
-                    <input type="password" name="senha" id="senha" class="form-control" placeholder="•••••••••" required="required">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-show-pass input-group-text"><i class="fas fa-eye"></i></button>
-                    </div>
+                    <input type="number" name="matricula" id="matricula" class="form-control" placeholder="1234567890" required="required">
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="perfil">
-                            Permissão
+                        <label class="input-group-text" for="telefone">
+                            Telefone
                         </label>
                     </div>
-                    <select name="perfil" id="perfil" class="custom-select">
-                        <option value="ADMIN">Admin</option>
-                        <option value="COMUM">Comum</option>
-                    </select>                
+                    <input type="number" name="telefone" id="telefone" class="form-control" placeholder="55 12345 1234" required="required">
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>
             </form>
         `);
-        updateListeners();
         $("form").on("submit", function (e) {
             e.preventDefault();
 
@@ -187,30 +194,23 @@
 
             let nome = $("#nome").val();
             let email = $("#email").val();
-            let perfis = [1];
-            let senha = $("#senha").val();
+            let matricula = $("#matricula").val();
+            let telefone = $("#telefone").val();
 
             $.ajax({
-                url: site + "/servidores",
+                url: site + "/cursos",
                 method: "POST",
                 data: JSON.stringify({
-                    nome, email, perfis, senha
+                    nome, email, matricula, telefone
                 }),
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": SESSION
+                    "Content-Type": "application/json"
                 }
             }).done(() => {
-                navigate("/professores/listar");
+                navigate("/cursos/listar");
             });
         });
-        $(".btn-show-pass").on("click", function () {
-            if ($("#senha").attr("type") == "text") {
-                $("#senha").attr("type", "password");
-            } else {
-                $("#senha").attr("type", "text");
-            }
-        });
+        updateListeners();
     }
 
     if (currentId) {
@@ -228,8 +228,9 @@
             </div>`);
 
         $.ajax({
-            url: site + "/servidores/" + currentId
+            url: site + "/cursos/" + currentId
         }).done((r) => {
+            console.log(r);
             $(".loading").remove();
             $("#content").append(`
                     <div class="row mb-3">
@@ -240,15 +241,54 @@
                             ${r.nome}
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-12">
-                            Email
+                            Nível
                         </div>
                         <div class="col-12 informacao">
-                            ${r.email}
+                            ${r.nivel}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            Turno
+                        </div>
+                        <div class="col-12 informacao">
+                            ${r.turno}
                         </div>
                     </div>
                 `);
+
+            var h = `
+                    <h3>Turmas</h3>
+                    <table class="table table-responsive table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Descrição
+                                </th>
+                                <th>
+                                    Semestre
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            r.turmas.forEach((item) => {
+                h += `<tr>
+                        <td>
+                            ${item.descricao}
+                        </td>
+                        <td>
+                            ${item.serieSemestre}
+                        </td>
+                    </tr>`;
+            });
+
+            h += `</tbody>
+                </table>`;
+
+            $("#content").append(h);
         });
     }
 </script>

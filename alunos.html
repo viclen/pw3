@@ -59,7 +59,7 @@
                     r.forEach(element => {
                         h += `<tr>
                         <td>
-                            <div class="nome-aluno-tabela">
+                            <div class="nome-tabela">
                                 <i class="fas fa-angle-right caret"></i>
                                 <p style="display: inline">${element.nome}</p>
                             </div>
@@ -107,12 +107,12 @@
             }
 
             $(".lista-alunos").html(h);
-            $(".nome-aluno-tabela").on("click", function () {
+            $(".nome-tabela").on("click", function () {
                 toggleMaisInfo(this);
             });
 
             $(".btn-excluir").on("click", function () {
-                var nomeAluno = $(this).closest("tr").find(".nome-aluno-tabela p").html();
+                var nomeAluno = $(this).closest("tr").find(".nome-tabela p").html();
 
                 var btn = $(this);
 
@@ -237,7 +237,7 @@
             url: site + "/alunos/" + currentId
         }).done((r) => {
             $(".loading").remove();
-            $("#content").append(`<div class="container">
+            $("#content").append(`
                     <div class="row mb-3">
                         <div class="col-12">
                             Nome
@@ -270,7 +270,7 @@
                             ${r.telefone}
                         </div>
                     </div>
-                </div>`);
+                `);
 
             var h = `
                     <h3>Turmas</h3>
