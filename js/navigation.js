@@ -46,7 +46,10 @@ function navigate(page) {
 
         currentPage = page;
 
-        if (_get[2] != undefined && _get[2] != "") {
+        if (_get[3] != undefined && _get[3] != "") {
+            currentFunction = isNaN(parseInt(_get[2])) ? _get[2] : "";
+            currentId = isNaN(parseInt(_get[3])) ? "" : parseInt(_get[3]);
+        } else if (_get[2] != undefined && _get[2] != "") {
             currentFunction = isNaN(parseInt(_get[2])) ? _get[2] : "";
             currentId = isNaN(parseInt(_get[2])) ? "" : parseInt(_get[2]);
         } else {
@@ -66,7 +69,7 @@ function navigate(page) {
                 updateListeners();
             });
 
-            document.location.hash = "/" + page + "/" + currentFunction + currentId;
+            document.location.hash = "/" + page + "/" + (currentFunction ? currentFunction + "/" : "") + currentId;
             document.title = "Papillon | " + page.capitalize();
             $(".header").html(page.capitalize());
             

@@ -39,6 +39,7 @@ body {
 
 .informacao { 
     font-weight: 600;
+    border-bottom: 1px solid #dddddd;
 }
 
 .sidebar>ul>li>a {
@@ -99,6 +100,18 @@ tr.linha-selecionada {
 
 .anchor {
     cursor: pointer;
+}
+
+.home .card-body svg {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    transform: rotateZ(15deg);
+    font-size: 65px
+}
+
+.home .card {
+    overflow: hidden;
 }
 
 @media only screen and (max-width: 576px) {

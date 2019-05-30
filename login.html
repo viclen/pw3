@@ -15,6 +15,7 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
+            z-index: 10;
         }
 
         .login-form form {
@@ -38,10 +39,22 @@
             font-size: 15px;
             font-weight: bold;
         }
+
+        .fundo {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            background: linear-gradient(to top, #bfbfbf, #e6e6e6);
+        }
     </style>
 </head>
 
 <body>
+    <div class="fundo"></div>
+
     <div class="login-form">
         <form action="" method="post" autocomplete="off">
             <h2 class="text-center">Login</h2>
@@ -67,8 +80,8 @@
         </form>
     </div>
 
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 10; display: none">
-        <div class="spinner-grow" role="status" style="position: absolute; left: 50%; top: 50%; margin-left: -15px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, #bfbfbfAA, #e6e6e6AA); z-index: 10; display: none">
+        <div class="spinner-grow" role="status" style="position: absolute; left: 50%; top: 50%; margin-left: -15px; margin-top: -15px;">
             <span class="sr-only">Loading...</span>
         </div>
     </div>
@@ -81,7 +94,7 @@
             let email = $("#email").val();
             let senha = $("#senha").val();
 
-            $(".spinner-grow").parent().fadeIn();
+            $(".spinner-grow").parent().fadeIn(200);
 
             $.ajax({
                 url: "http://pw3.herokuapp.com/login",
