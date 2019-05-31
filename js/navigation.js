@@ -11,7 +11,7 @@ $(document).ready(() => {
 
     navigate(document.location.hash);
 
-    $("nav a").toArray().forEach(function (element) {
+    $("nav ul li a").toArray().forEach(function (element) {
         $(element).html($(element).html() + '<i class="fas fa-angle-right"></i>');
     });
 

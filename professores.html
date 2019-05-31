@@ -76,6 +76,7 @@
                         </td>
                         <td class="col-4">
                             <button class="btn btn-light btn-ver" data-id="${element.id}"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-primary btn-editar" data-id="${element.id}"><i class="fas fa-edit"></i></button>
                             <button class="btn btn-danger btn-excluir" data-id="${element.id}"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>`;
@@ -121,6 +122,11 @@
             $(".btn-ver").on("click", function (e) {
                 e.preventDefault();
                 navigate(`#/${currentPage}/${$(this).attr("data-id")}`);
+            });
+
+            $(".btn-editar").on("click", function (e) {
+                e.preventDefault();
+                navigate(`#/${currentPage}/editar/${$(this).attr("data-id")}`);
             });
 
             $(".search-input").on("keyup", function () {
@@ -210,6 +216,95 @@
             } else {
                 $("#senha").attr("type", "text");
             }
+        });
+    }
+
+    editar = function () {
+        $(".menu-bar .col").html(`
+            <button class="btn btn-primary backButton">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        `);
+
+        $("#content").append(`
+            <div class="container text-center loading">
+                <div class="spinner-grow" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>`);
+
+        $.ajax({
+            url: site + "/servidores/" + currentId,
+        }).done((r) => {
+            $(".spinner-grow").parent().remove();
+
+            $("#content").append(`
+                <div class="alert alert-danger" style="display: none">
+                    <i class="fas fa-exclamation-circle"></i>&nbsp;
+                    Não foi possível concluir as alterações. Tente novamente.
+                </div>
+                <form action="" method="post">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="nome">
+                                Nome
+                            </label>
+                        </div>
+                        <input type="text" name="nome" id="nome" class="form-control" placeholder="João da Silva" required="required" value="${r.nome}">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="email">
+                                Email
+                            </label>
+                        </div>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="joao@gmail.com" required="required" value="${r.email}">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="senha">
+                                Senha
+                            </label>
+                        </div>
+                        <input type="password" name="senha" id="senha" class="form-control" placeholder="••••••••••" required="required">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            `);
+            $("form").on("submit", function (e) {
+                e.preventDefault();
+
+                $(".alert").slideUp();
+
+                $("#content").append(`<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #efefefAA; z-index: 10;">
+                    <div class="spinner-grow" role="status" style="position: absolute; left: 50%; top: 50%; margin-left: -15px; margin-top: -15px;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`);
+
+                let nome = $("#nome").val();
+                let email = $("#email").val();
+                let senha = $("#matricula").val();
+
+                $.ajax({
+                    url: site + "/servidores/" + currentId,
+                    method: "PUT",
+                    data: JSON.stringify({
+                        nome, email, senha
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).done(() => {
+                    navigate("/servidores/listar");
+                }).fail(() => {
+                    $(".alert").slideDown();
+                    $(".spinner-grow").parent().remove();
+                });
+            });
+            updateListeners();
         });
     }
 

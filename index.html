@@ -24,7 +24,18 @@
 <body>
     <nav class="sidebar">
         <button class="btn-toggle-menu"><i class="fas fa-bars"></i></button>
-        <div class="title">Menu</div>
+        <div class="title">
+            <i class="fas fa-user-circle icone-usuario"></i>
+            <div class="nome-usuario">
+                João
+            </div>
+            <div class="sair">
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </a>
+            </div>
+        </div>
         <ul>
             <li>
                 <a href="/home">
@@ -56,12 +67,6 @@
                     Cursos
                 </a>
             </li>
-            <li>
-                <a href="/logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Sair
-                </a>
-            </li>
         </ul>
     </nav>
 
@@ -75,6 +80,17 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/all.min.js"></script>
     <script src="js/main.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            userEmail = localStorage.getItem("email");
+            userName = localStorage.getItem("nome");
+            $(".nome-usuario").html(`
+                ${userName}<br>
+                <small title="${userEmail}">${userEmail}</small>
+            `);
+        })
+    </script>
 
     <div class="container" id="content">
 
