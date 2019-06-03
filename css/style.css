@@ -28,9 +28,9 @@ body {
     color: white;
     position: relative;
     height: 85px;
-    background: #adadad;
-    background: -webkit-linear-gradient(to bottom, #adadad, #7d7d7d);
-    background: linear-gradient(to bottom, #adadad, #7d7d7d);
+    background: #0098ff;
+    background: -webkit-linear-gradient(to bottom, #0098ff, #7d7d7d);
+    background: linear-gradient(to bottom, #0098ff, #2f516b);
 }
 
 .sidebar>.title>.sair {
@@ -50,6 +50,9 @@ body {
     top: 10px;
     width: 50px;
     height: 50px;
+    box-shadow: 3px 3px 20px -5px black;
+    border-radius: 50%;
+    font-size: 51px;
 }
 
 .sidebar>.title>.nome-usuario {
@@ -134,12 +137,12 @@ tr.linha-selecionada {
     cursor: pointer;
 }
 
-.home .card-body svg {
+.home .card-body .fas {
     position: absolute;
     top: -5px;
     right: -5px;
     transform: rotateZ(15deg);
-    font-size: 65px
+    font-size: 65px;
 }
 
 .home .card {
