@@ -172,9 +172,9 @@
                         </label>
                     </div>
                     <select name="perfil" id="perfil" class="custom-select">
-                        <option value="ADMIN">Admin</option>
-                        <option value="COMUM">Comum</option>
-                    </select>                
+                        <option value="1">Admin</option>
+                        <option value="2">Comum</option>
+                    </select>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Enviar</button>
@@ -193,15 +193,21 @@
 
             let nome = $("#nome").val();
             let email = $("#email").val();
-            let perfis = [1];
+            let perfis = [$("#perfil").val()];
             let senha = $("#senha").val();
+
+            let dados = {
+                nome, email, senha, perfis
+            };
+
+            console.log(dados);
+
+            if(!confirm("Enviar?")) return;
 
             $.ajax({
                 url: site + "/servidores",
                 method: "POST",
-                data: JSON.stringify({
-                    nome, email, perfis, senha
-                }),
+                data: JSON.stringify(dados),
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": SESSION
@@ -268,6 +274,17 @@
                         </div>
                         <input type="password" name="senha" id="senha" class="form-control" placeholder="••••••••••" required="required">
                     </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="perfil">
+                                Permissão
+                            </label>
+                        </div>
+                        <select name="perfil" id="perfil" class="custom-select">
+                            <option value="1">Admin</option>
+                            <option value="2">Comum</option>
+                        </select>
+                    </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Enviar</button>
                     </div>
@@ -287,13 +304,19 @@
                 let nome = $("#nome").val();
                 let email = $("#email").val();
                 let senha = $("#matricula").val();
+                let perfis = [$("#perfil").val()];
 
+                let dados = {
+                    nome, email, senha, perfis
+                };
+
+                console.log(dados);
+
+                return;
                 $.ajax({
                     url: site + "/servidores/" + currentId,
                     method: "PUT",
-                    data: JSON.stringify({
-                        nome, email, senha
-                    }),
+                    data: JSON.stringify(dados),
                     headers: {
                         "Content-Type": "application/json"
                     }
@@ -325,6 +348,7 @@
         $.ajax({
             url: site + "/servidores/" + currentId
         }).done((r) => {
+            console.log(r);
             $(".loading").remove();
             $("#content").append(`
                     <div class="row mb-3">
@@ -341,6 +365,14 @@
                         </div>
                         <div class="col-12 informacao">
                             ${r.email}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            Perfil
+                        </div>
+                        <div class="col-12 informacao">
+                            ${r.perfis}
                         </div>
                     </div>
                 `);

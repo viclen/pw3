@@ -194,6 +194,15 @@
                 </div>
             </form>
         `);
+        $.ajax({
+            url: site + "/turmas"
+        }).done(function(r){
+            var h = "";
+
+            r.forEach((item)=>{
+
+            });
+        });
         $("form").on("submit", function (e) {
             e.preventDefault();
 
