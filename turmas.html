@@ -51,7 +51,6 @@
         $.ajax({
             url: site + "/turmas"
         }).done(function (r) {
-            console.log(r);
             var h = "";
 
             if (typeof r == "string") {
@@ -61,6 +60,7 @@
             try {
                 if (r.length) {
                     r.forEach(element => {
+                        console.log(element);
                         h += `<tr>
                         <td>
                             <div class="nome-tabela">
@@ -73,6 +73,25 @@
                                         Professor
                                         <div class="informacao">
                                             ${element.professor.nome}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-3">
+                                        Alunos
+                                        <div class="informacao">  `;
+
+                        element.alunos.forEach((aluno) => {
+                            h += `<a class="anchor" href="alunos/${aluno.id}">${aluno.nome}</a>, `;
+                        });
+
+                        h = h.substr(0, h.length - 2);
+
+                        h += `</div>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-3">
+                                        Horários
+                                        <div class="informacao">
+                                            ${diassemana[element.diaSemana1] || ""} - ${element.horario1 || ""}<br>
+                                            ${diassemana[element.diaSemana2] || ""} - ${element.horario2 || ""}
                                         </div>
                                     </div>
                                 </div>
@@ -93,12 +112,12 @@
                         </tr>
                     `;
                 }
-
             } catch (error) {
                 console.error(error);
             }
 
             $(".lista-turmas").html(h);
+            updateListeners();
             $(".nome-tabela").on("click", function () {
                 toggleMaisInfo(this);
             });
@@ -170,6 +189,60 @@
                     <select name="professor" id="professor" class="custom-select">
                     </select>
                 </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="horario1">
+                            Horario 1
+                        </label>
+                    </div>
+                    <input type="time" name="horario1" id="horario1" class="form-control" placeholder="Turma" required="required">
+                    <select class="form-control custom-select" id="diasemana1" required="required">
+                        <option value=""></option>
+                        ${diassemana.map((item, i) => {
+            return "<option value='" + i + "'>" + item + "</option>";
+        })}
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="horario2">
+                            Horario 2
+                        </label>
+                    </div>
+                    <input type="time" name="horario2" id="horario2" class="form-control" placeholder="Turma">
+                    <select class="form-control custom-select" id="diasemana2">
+                        <option value=""></option>
+                        ${diassemana.map((item, i) => {
+            return "<option value='" + i + "'>" + item + "</option>";
+        })}
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12 mb-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="select-aluno" class="input-group-text">Adicionar aluno</label>
+                            </div>
+                            <select class="custom-select" id="select-aluno">
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" id="addAluno"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12 table-responsive">
+                        <table class="table table-bordered" id="tabela-alunos">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>
@@ -185,6 +258,44 @@
                 listaProfessores.push(professor);
             });
         });
+
+        $.ajax({
+            url: site + "/alunos"
+        }).done((r) => {
+            listaAlunos = [];
+            alunosSelecionados = [];
+
+            r.forEach((aluno, i) => {
+                $("#select-aluno").append(`<option value="${i}">${aluno.nome} - ${aluno.matricula}</option>`);
+                listaAlunos.push(aluno);
+            });
+
+            $("#addAluno").on("click", function (e) {
+                e.preventDefault();
+                var aluno = listaAlunos[$("#select-aluno").val()];
+                if (alunosSelecionados.includes(aluno)) return;
+                alunosSelecionados.push(aluno);
+                atualizarAlunos();
+            });
+        });
+
+        atualizarAlunos = function () {
+            var h = "";
+            alunosSelecionados.forEach((aluno, i) => {
+                h += `
+                    <tr>
+                        <td>${aluno.nome}</td>
+                        <td><button class="btn btn-danger btn-remove-aluno" data-target="${i}"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+            $("#tabela-alunos > tbody").html(h);
+            $(".btn-remove-aluno").on("click", function (e) {
+                e.preventDefault();
+                alunosSelecionados.splice($(this).attr("data-target"), 1);
+                atualizarAlunos();
+            });
+        }
 
         $.ajax({
             url: site + "/cursos"
@@ -207,13 +318,18 @@
             let descricao = $("#descricao").val();
             let curso = listaCursos[$("#curso").val()];
             let professor = listaProfessores[$("#professor").val()];
+            let horario1 = $("#horario1").val();
+            let horario2 = $("#horario2").val();
+            let diaSemana1 = $("#diasemana1").val();
+            let diaSemana2 = $("#diasemana2").val();
+            let alunos = alunosSelecionados;
 
             let dados = {
-                professor, curso, descricao
+                professor, curso, descricao, alunos,
+                horario1, horario2, diaSemana1, diaSemana2
             };
 
             console.log(dados);
-            // return;
 
             $.ajax({
                 url: site + "/turmas",
@@ -270,7 +386,7 @@
                             Semestre
                         </div>
                         <div class="col-12 informacao">
-                            ${r.serieSemestre}
+                            ${r.alunos}
                         </div>
                     </div>
                 `);

@@ -1,5 +1,6 @@
 var response;
 var diassemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+diassemana[-1] = "";
 var site = "http://pw3.herokuapp.com";
 var SESSION = localStorage.getItem("session");
 

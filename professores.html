@@ -200,10 +200,6 @@
                 nome, email, senha, perfis
             };
 
-            console.log(dados);
-
-            if(!confirm("Enviar?")) return;
-
             $.ajax({
                 url: site + "/servidores",
                 method: "POST",
