@@ -99,6 +99,7 @@
                         </td>
                         <td class="col-4">
                             <button class="btn btn-light btn-ver" data-id="${element.id}"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-primary btn-editar" data-id="${element.id}"><i class="fas fa-edit"></i></button>
                             <button class="btn btn-danger btn-excluir" data-id="${element.id}"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>`;
@@ -107,7 +108,7 @@
                     h = `
                         <tr>
                             <td colspan="2">
-                                Nenhuma turma encontrado.
+                                Nenhuma turma encontrada.
                             </td>
                         </tr>
                     `;
@@ -148,7 +149,10 @@
                     }
                 });
             });
-
+            $(".btn-editar").on("click", function (e) {
+                e.preventDefault();
+                navigate(`#/${currentPage}/editar/${$(this).attr("data-id")}`);
+            });
             $(".btn-ver").on("click", function (e) {
                 e.preventDefault();
                 navigate(`#/${currentPage}/${$(this).attr("data-id")}`);
@@ -253,10 +257,13 @@
             url: site + "/servidores"
         }).done((r) => {
             listaProfessores = [];
+            var h = "";
             r.forEach((professor, i) => {
-                $("#professor").append(`<option value="${i}">${professor.nome}</option>`);
+                h += `<option value="${i}">${professor.nome}</option>`;
                 listaProfessores.push(professor);
             });
+
+            $("#professor").html(h);
         });
 
         $.ajax({
@@ -265,10 +272,12 @@
             listaAlunos = [];
             alunosSelecionados = [];
 
+            var h = "";
             r.forEach((aluno, i) => {
-                $("#select-aluno").append(`<option value="${i}">${aluno.nome} - ${aluno.matricula}</option>`);
+                h += `<option value="${i}">${aluno.nome} - ${aluno.matricula}</option>`;
                 listaAlunos.push(aluno);
             });
+            $("#select-aluno").html(h);
 
             $("#addAluno").on("click", function (e) {
                 e.preventDefault();
@@ -285,7 +294,9 @@
                 h += `
                     <tr>
                         <td>${aluno.nome}</td>
-                        <td><button class="btn btn-danger btn-remove-aluno" data-target="${i}"><i class="fas fa-trash"></i></button></td>
+                        <td>
+                            <button class="btn btn-danger btn-remove-aluno" data-target="${i}"><i class="fas fa-trash"></i></button>
+                        </td>
                     </tr>
                 `;
             });
@@ -300,10 +311,13 @@
         $.ajax({
             url: site + "/cursos"
         }).done((r) => {
+            var h = "";
             r.forEach((curso, i) => {
-                $("#curso").append(`<option value="${i}">${curso.nome}</option>`);
+                h += `<option value="${i}">${curso.nome}</option>`;
                 listaCursos.push(curso);
             });
+
+            $("#curso").html(h);
         });
 
         $("form").on("submit", function (e) {
@@ -343,6 +357,220 @@
             });
         });
         updateListeners();
+    }
+
+    editar = function () {
+        $(".menu-bar .col").html(`
+            <button class="btn btn-primary backButton">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        `);
+
+        $("#content").append(`
+            <div class="container text-center loading">
+                <div class="spinner-grow" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>`);
+
+        $.ajax({
+            url: site + "/turmas/" + currentId,
+        }).done((turma) => {
+            console.log(turma);
+            $(".spinner-grow").parent().remove();
+            $("#content").append(`
+                <form action="" method="post">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="descricao">
+                                Descrição
+                            </label>
+                        </div>
+                        <input type="text" name="descricao" id="descricao" value="${turma.descricao}" class="form-control" placeholder="Turma" required="required">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="curso">
+                                Curso
+                            </label>
+                        </div>
+                        <select name="curso" id="curso" class="custom-select">
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="professor">
+                                Professor
+                            </label>
+                        </div>
+                        <select name="professor" id="professor" class="custom-select">
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="horario1">
+                                Horario 1
+                            </label>
+                        </div>
+                        <input type="time" name="horario1" id="horario1" class="form-control" value="${turma.horario1 || ""}" required="required">
+                        <select class="form-control custom-select" id="diasemana1" required="required">
+                            <option value=""></option>
+            ${diassemana.map((item, i) => {
+                return "<option " + (i == turma.diaSemana1 ? "selected" : "") + " value='" + i + "'>" + item + "</option>";
+            })}
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="horario2">
+                                Horario 2
+                            </label>
+                        </div>
+                        <input type="time" name="horario2" id="horario2" class="form-control" value="${turma.horario2 || ""}">
+                        <select class="form-control custom-select" id="diasemana2">
+                            <option value=""></option>
+            ${diassemana.map((item, i) => {
+                return "<option " + (i == turma.diaSemana2 ? "selected" : "") + " value='" + i + "'>" + item + "</option>";
+            })}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-12 mb-2">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label for="select-aluno" class="input-group-text">Adicionar aluno</label>
+                                </div>
+                                <select class="custom-select" id="select-aluno">
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="addAluno"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12 table-responsive">
+                            <table class="table table-bordered" id="tabela-alunos">
+                                <thead>
+                                    <tr>
+                                        <th>Aluno</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            `);
+
+            $.ajax({
+                url: site + "/servidores"
+            }).done((r) => {
+                listaProfessores = [];
+                r.forEach((professor, i) => {
+                    $("#professor").append(`<option ${professor.id == turma.professor.id ? "selected" : ""} value="${i}">${professor.nome}</option>`);
+                    listaProfessores.push(professor);
+                });
+            });
+
+            $.ajax({
+                url: site + "/alunos"
+            }).done((r) => {
+                listaAlunos = [];
+                alunosSelecionados = [];
+
+                var h = "";
+                r.forEach((aluno, i) => {
+                    h += `<option value="${i}">${aluno.nome} - ${aluno.matricula}</option>`;
+                    listaAlunos.push(aluno);
+                });
+                $("#select-aluno").html(h);
+
+                $("#addAluno").on("click", function (e) {
+                    e.preventDefault();
+                    var aluno = listaAlunos[$("#select-aluno").val()];
+                    if (alunosSelecionados.includes(aluno)) return;
+                    alunosSelecionados.push(aluno);
+                    atualizarAlunos();
+                });
+            });
+
+            atualizarAlunos = function () {
+                var h = "";
+                alunosSelecionados.forEach((aluno, i) => {
+                    h += `
+                    <tr>
+                        <td>${aluno.nome}</td>
+                        <td>
+                            <button class="btn btn-danger btn-remove-aluno" data-target="${i}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                });
+                $("#tabela-alunos > tbody").html(h);
+                $(".btn-remove-aluno").on("click", function (e) {
+                    e.preventDefault();
+                    alunosSelecionados.splice($(this).attr("data-target"), 1);
+                    atualizarAlunos();
+                });
+            }
+
+            alunosSelecionados = turma.alunos;
+            atualizarAlunos();
+
+            $.ajax({
+                url: site + "/cursos"
+            }).done((r) => {
+                var h = "";
+                r.forEach((curso, i) => {
+                    h += `<option value="${i}">${curso.nome}</option>`;
+                    listaCursos.push(curso);
+                });
+
+                $("#curso").html(h);
+            });
+
+            $("form").on("submit", function (e) {
+                e.preventDefault();
+
+                $("#content").append(`<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 10; display: none">
+                    <div class="spinner-grow" role="status" style="position: absolute; left: 50%; top: 50%; margin-left: -15px; margin-top: -15px;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`);
+
+                let descricao = $("#descricao").val();
+                let curso = listaCursos[$("#curso").val()];
+                let professor = listaProfessores[$("#professor").val()];
+                let horario1 = $("#horario1").val();
+                let horario2 = $("#horario2").val();
+                let diaSemana1 = $("#diasemana1").val();
+                let diaSemana2 = $("#diasemana2").val();
+                let alunos = alunosSelecionados;
+
+                let dados = {
+                    professor, curso, descricao, alunos,
+                    horario1, horario2, diaSemana1, diaSemana2
+                };
+
+                console.log(dados);
+
+                $.ajax({
+                    url: site + "/turmas",
+                    method: "PUT",
+                    data: JSON.stringify(dados),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).done(() => {
+                    navigate("/turmas/listar");
+                });
+            });
+            updateListeners();
+        });
     }
 
     if (currentId && currentFunction == "") {
