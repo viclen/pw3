@@ -13,6 +13,7 @@
 <script>
     var listaProfessores = [];
     var listaCursos = [];
+    var alunosSelecionados = [];
 
     listar = function () {
         $("#content").append(`
@@ -60,7 +61,6 @@
             try {
                 if (r.length) {
                     r.forEach(element => {
-                        console.log(element);
                         h += `<tr>
                         <td>
                             <div class="nome-tabela">
@@ -343,8 +343,6 @@
                 horario1, horario2, diaSemana1, diaSemana2
             };
 
-            console.log(dados);
-
             $.ajax({
                 url: site + "/turmas",
                 method: "POST",
@@ -376,7 +374,6 @@
         $.ajax({
             url: site + "/turmas/" + currentId,
         }).done((turma) => {
-            console.log(turma);
             $(".spinner-grow").parent().remove();
             $("#content").append(`
                 <form action="" method="post">
@@ -480,7 +477,6 @@
                 url: site + "/alunos"
             }).done((r) => {
                 listaAlunos = [];
-                alunosSelecionados = [];
 
                 var h = "";
                 r.forEach((aluno, i) => {
@@ -492,7 +488,9 @@
                 $("#addAluno").on("click", function (e) {
                     e.preventDefault();
                     var aluno = listaAlunos[$("#select-aluno").val()];
-                    if (alunosSelecionados.includes(aluno)) return;
+                    if (alunosSelecionados.filter((a) => { if(a.id==aluno.id) return aluno; }).length) {
+                        return;
+                    }
                     alunosSelecionados.push(aluno);
                     atualizarAlunos();
                 });
@@ -526,7 +524,7 @@
             }).done((r) => {
                 var h = "";
                 r.forEach((curso, i) => {
-                    h += `<option value="${i}">${curso.nome}</option>`;
+                    h += `<option ${(turma.curso.id==curso.id ? "selected" : "")} value="${i}">${curso.nome}</option>`;
                     listaCursos.push(curso);
                 });
 
@@ -559,7 +557,7 @@
                 console.log(dados);
 
                 $.ajax({
-                    url: site + "/turmas",
+                    url: site + "/turmas/" + currentId,
                     method: "PUT",
                     data: JSON.stringify(dados),
                     headers: {
@@ -590,7 +588,6 @@
         $.ajax({
             url: site + "/turmas/" + currentId
         }).done((r) => {
-            console.log(r);
             $(".loading").remove();
             $("#content").append(`
                     <div class="row mb-3">

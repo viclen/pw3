@@ -26,3 +26,11 @@ function toggleMaisInfo(element) {
     $(element).parent().find(".caret").toggleClass("fa-angle-right");
     $(element).closest("tr").toggleClass("linha-selecionada");
 }
+
+var logUrl = false;
+var ajax = $.ajax;
+
+$.ajax = function (data) {
+    if (logUrl) console.log(data.url);
+    return ajax(data);
+}

@@ -62,11 +62,14 @@ function navigate(page) {
             error: () => { alert("Página não encontrada"); }
         }).done((response) => {
             $("#content").fadeOut(200, function () {
-                $("#content").html(response);
-                $("#content").fadeIn(200);
-
-                executeHashFunction();
-                updateListeners();
+                try {
+                    $("#content").html(response);
+                    $("#content").fadeIn(200);
+    
+                    executeHashFunction();
+                    updateListeners();
+                } catch (error) {
+                }
             });
 
             document.location.hash = "/" + page + "/" + (currentFunction ? currentFunction + "/" : "") + currentId;
