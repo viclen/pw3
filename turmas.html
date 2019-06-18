@@ -488,7 +488,7 @@
                 $("#addAluno").on("click", function (e) {
                     e.preventDefault();
                     var aluno = listaAlunos[$("#select-aluno").val()];
-                    if (alunosSelecionados.filter((a) => { if(a.id==aluno.id) return aluno; }).length) {
+                    if (alunosSelecionados.filter((a) => { if (a.id == aluno.id) return aluno; }).length) {
                         return;
                     }
                     alunosSelecionados.push(aluno);
@@ -524,7 +524,7 @@
             }).done((r) => {
                 var h = "";
                 r.forEach((curso, i) => {
-                    h += `<option ${(turma.curso.id==curso.id ? "selected" : "")} value="${i}">${curso.nome}</option>`;
+                    h += `<option ${(turma.curso.id == curso.id ? "selected" : "")} value="${i}">${curso.nome}</option>`;
                     listaCursos.push(curso);
                 });
 
@@ -554,8 +554,6 @@
                     horario1, horario2, diaSemana1, diaSemana2
                 };
 
-                console.log(dados);
-
                 $.ajax({
                     url: site + "/turmas/" + currentId,
                     method: "PUT",
@@ -568,6 +566,12 @@
                 });
             });
             updateListeners();
+
+            $(".btn-remove-aluno").on("click", function (e) {
+                e.preventDefault();
+                alunosSelecionados.splice($(this).attr("data-target"), 1);
+                atualizarAlunos();
+            });
         });
     }
 

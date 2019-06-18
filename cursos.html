@@ -71,12 +71,6 @@
                                             ${element.nivel}
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-6 mb-3">
-                                        Turno
-                                        <div class="col-12 informacao">
-                                            ${element.turno}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </td>
@@ -167,14 +161,6 @@
                     </div>
                     <input type="text" name="nivel" id="nivel" class="form-control" required="required">
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="turno">
-                            Turno
-                        </label>
-                    </div>
-                    <input type="text" name="turno" id="turno" class="form-control" required="required">
-                </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>
@@ -191,13 +177,12 @@
 
             let nome = $("#nome").val();
             let nivel = $("#nivel").val();
-            let turno = $("#turno").val();
 
             $.ajax({
                 url: site + "/cursos",
                 method: "POST",
                 data: JSON.stringify({
-                    nome, nivel, turno
+                    nome, nivel
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -250,14 +235,6 @@
                         </div>
                         <input type="text" name="nivel" id="nivel" class="form-control" required="required" value="${r.nivel}">
                     </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="turno">
-                                Turno
-                            </label>
-                        </div>
-                        <input type="text" name="turno" id="turno" class="form-control" required="required" value="${r.turno}">
-                    </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Enviar</button>
                     </div>
@@ -277,13 +254,12 @@
 
                 let nome = $("#nome").val();
                 let nivel = $("#nivel").val();
-                let turno = $("#turno").val();
 
                 $.ajax({
                     url: site + "/cursos/" + currentId,
                     method: "PUT",
                     data: JSON.stringify({
-                        nome, nivel, turno
+                        nome, nivel
                     }),
                     headers: {
                         "Content-Type": "application/json"
@@ -332,14 +308,6 @@
                         </div>
                         <div class="col-12 informacao">
                             ${r.nivel}
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            Turno
-                        </div>
-                        <div class="col-12 informacao">
-                            ${r.turno}
                         </div>
                     </div>
                 `);
